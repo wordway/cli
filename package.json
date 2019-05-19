@@ -1,0 +1,61 @@
+{
+  "name": "wordway-cli",
+  "version": "1.0.0",
+  "description": "Command-line Interface (CLI) for WordWay",
+  "main": "lib/index.js",
+  "repository": "git@github.com:wordway/wordway-cli.git",
+  "author": "JianyingLi <lijy91@foxmail.com>",
+  "license": "MIT",
+  "bin": {
+    "wordway": "bin/wordway"
+  },
+  "scripts": {
+    "clean": "rm -rf lib",
+    "start": "tsc --build && ./bin/wordway",
+    "build": "yarn clean && tsc --build",
+    "lint": "node_modules/.bin/eslint src/ --ext .ts",
+    "test": "node_modules/.bin/jest"
+  },
+  "dependencies": {
+    "@types/node": "^11.13.4",
+    "axios": "^0.18.0",
+    "axios-logger": "^1.0.0",
+    "chalk": "^2.1.0",
+    "commander": "^2.11.0",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.11",
+    "prompt": "^1.0.0",
+    "uuid": "^3.1.0",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "@typescript-eslint/eslint-plugin": "^1.6.0",
+    "@typescript-eslint/parser": "^1.6.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-import": "^2.17.1",
+    "eslint-plugin-jest": "^22.4.1",
+    "jest": "^24.7.1",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.4.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "lib"
+    ]
+  }
+}
