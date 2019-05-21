@@ -28,7 +28,7 @@ setTimeout((): void => {
       wordway: '1.0.0',
       info: {
         slug,
-        title: program.title || 'A wordbook example',
+        title: program.title || 'A example wordbook',
         summary: program.summary || '',
         tags: ['wordway', 'example'],
       },
