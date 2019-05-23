@@ -9,19 +9,37 @@ import { checkIsAuthorized } from './globals';
 program
   .parse(process.argv);
 
-const loadWordbook = (path: string) => {
-  const wordbook = YAML.load(path);
+const path = `${process.cwd()}`;
+
+const loadWordbook = () => {
+  const wordbook = YAML.load(`${path}/wordbook.yaml`);
+
+  let chapters = [];
+  if (fs.existsSync(`${path}/chapters`)) {
+    const files = fs.readdirSync(`${path}/chapters`);
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const chapter = YAML.load(`${path}/chapters/${files[i]}`);
+      if (!chapter.slug) {
+        chapter.slug = file.replace('.yaml', '');
+      }
+      chapters = [...chapters, chapter];
+    }
+  }
+
+  if (chapters.length > 0) {
+    return Object.assign(wordbook, { chapters });
+  }
+
   return wordbook;
 }
 
 setTimeout(async (): Promise<void> => {
   if (!checkIsAuthorized()) return;
 
-  const wordbookYamlFilePath = `${process.cwd()}/wordbook.yaml`;
-
   logger.info('Publishing...');
   try {
-    const wordbook = loadWordbook(wordbookYamlFilePath);
+    const wordbook = loadWordbook();
     const { info } = wordbook;
 
     let wordbookCreated = true;
@@ -44,6 +62,7 @@ setTimeout(async (): Promise<void> => {
 
     logger.success(`Published ${wordbook.info.title} (${wordbook.info.slug})`);
   } catch (e) {
+    logger.error(JSON.stringify(e.response.data));
     logger.error(e.message);
   }
 });
