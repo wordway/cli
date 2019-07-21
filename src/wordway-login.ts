@@ -25,7 +25,7 @@ prompt.start();
 prompt.get(promptSchema, async (_, result): Promise<void> => {
   logger.info('Logging in...');
   try {
-    const { data: { data: user } } = await apiClient.post('/account/login', result);
+    const { data: { data: user } } = await apiClient.post('/accounts/login', result);
     setCredential(user);
 
     logger.success(`Hi ${user.name || user.email}, Welcome to wordway!`);

@@ -10,7 +10,7 @@ setTimeout(async (): Promise<void> => {
   logger.info('Logging out...');
   try {
     const credential = getCredential();
-    await apiClient.post('/account/logout');
+    await apiClient.post('/accounts/logout');
     setCredential({});
 
     logger.success(`Goodbye ${credential.name || credential.email}.`);
