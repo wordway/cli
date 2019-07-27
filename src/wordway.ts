@@ -2,7 +2,7 @@ import * as program from 'commander';
 
 program
   .version('1.0.0')
-  .description('Command-line Interface (CLI) for WordWay')
+  .description('Command-line Interface (CLI) for Wordway')
   .command('login', 'Log in.')
   .command('logout', 'Log out.')
   // Sub-Commands

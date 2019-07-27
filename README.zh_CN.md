@@ -4,7 +4,7 @@
 
 [English](./README.md) | 简体中文
 
-WordWay的命令行界面（CLI）
+Wordway 的命令行界面（CLI）
 
 ## 安装
 
@@ -27,7 +27,7 @@ $ wordway -v
 ```bash
 Usage: wordway [options] [command]
 
-Command-line Interface (CLI) for WordWay
+Command-line Interface (CLI) for Wordway
 
 Options:
   -V, --version  output the version number
