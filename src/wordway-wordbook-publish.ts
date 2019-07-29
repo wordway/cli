@@ -19,9 +19,18 @@ const loadWordbook = () => {
     const files = fs.readdirSync(`${path}/chapters`);
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const chapter = YAML.load(`${path}/chapters/${files[i]}`);
-      if (!chapter.slug) {
-        chapter.slug = file.replace('.yaml', '');
+      let chapter = YAML.load(`${path}/chapters/${files[i]}`);
+      if (chapter.unique_id) {
+        delete chapter.unique_id;
+      }
+      if (!chapter.slug && chapter.slug !== file.replace('.yaml', '')) {
+        chapter = Object.assign(
+          {
+            slug: file.replace('.yaml', ''),
+          },
+          chapter,
+        );
+        fs.writeFileSync(`${path}/chapters/${files[i]}`, YAML.stringify(chapter, 8, 2));
       }
       chapters = [...chapters, chapter];
     }
