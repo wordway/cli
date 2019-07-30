@@ -45,7 +45,16 @@ setTimeout(async (): Promise<void> => {
     const wordbook = loadWordbook();
     const { info } = wordbook;
 
-    const { data: { data: { chapters = [], words = [] } } } = await apiClient.get(`/wordbooks/${info.slug}`, {
+    const {
+      data: {
+        data: {
+          wordCount,
+          updatedAt,
+          chapters = [],
+          words = [],
+        },
+      },
+    } = await apiClient.get(`/wordbooks/${info.slug}`, {
       params: {
         include: ['words', 'chapters', 'chapters.words'],
       },
@@ -57,6 +66,9 @@ setTimeout(async (): Promise<void> => {
 
     const readmeText = `
 # wordbook-${info.slug}
+
+![#](https://img.shields.io/badge/word%20count-${wordCount}-blue.svg)
+![#](https://img.shields.io/date/${new Date(updatedAt).getTime() / 1000}?label=last%20update)
 
 ${info.title}
 
