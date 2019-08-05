@@ -1,6 +1,7 @@
 import * as program from 'commander';
 import * as fs from 'fs';
 import * as YAML from 'yamljs';
+import * as inquirer from 'inquirer';
 import chalk from 'chalk';
 import logger from './utilities/logger';
 
@@ -9,7 +10,7 @@ program
   .option('-s, --summary <string>', 'summary')
   .parse(process.argv);
 
-setTimeout((): void => {
+setTimeout(async (): Promise<void> => {
   const slug = program.args[0];
   const path = `${process.cwd()}/wordbook-${slug}`;
 
@@ -24,6 +25,32 @@ setTimeout((): void => {
       version: '1.0.0',
     };
 
+    const { visibility, difficultyLevel } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'title',
+      },
+      {
+        type: 'list',
+        name: 'visibility',
+        choices: [
+          { name: 'Public' , value: 'public' },
+          { name: 'Private', value: 'private' },
+        ]
+      },
+      {
+        type: 'list',
+        name: 'difficultyLevel',
+        message: 'difficulty level:',
+        choices: [
+          { value: 'D1', name: 'D1 - Easy' },
+          { value: 'D2', name: 'D2 - Moderate' },
+          { value: 'D3', name: 'D3 - Hard' },
+          { value: 'D4', name: 'D4 - Challenging' },
+        ]
+      }
+    ]);
+
     const wordbook = {
       wordway: '1.0.0',
       info: {
@@ -31,6 +58,13 @@ setTimeout((): void => {
         title: program.title || 'A example wordbook',
         summary: program.summary || '',
         tags: ['wordway', 'example'],
+        visibility,
+        difficulty_level: difficultyLevel,
+        repository_type: '',
+        repository_url: '',
+        author: '',
+        author_email: '',
+        author_link: '',
       },
       words: [
         { word: 'hello' },

@@ -7,7 +7,6 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 import * as AxiosLogger from 'axios-logger';
-import normalize from '../utilities/normalize';
 import { getCredential, getConfig } from '../globals';
 
 class ApiClient {
@@ -25,7 +24,6 @@ class ApiClient {
       const nextConfig = Object.assign(
         {},
         config,
-        { data: normalize('snakecase', config.data) },
       );
 
       if (this.credential && this.credential.jwtToken) {
@@ -38,7 +36,6 @@ class ApiClient {
       const nextResponse = Object.assign(
         {},
         response,
-        { data: normalize('camelcase', response.data) },
       );
       return nextResponse;
     });
