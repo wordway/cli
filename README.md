@@ -19,7 +19,7 @@ $ npm install -g git+https://github.com/wordway/wordway-cli.git
 Now you can run CLI using following command anywhere
 
 ```bash
-$ wordway -v
+$ wordway -V
 ```
 
 ### Usage

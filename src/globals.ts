@@ -49,11 +49,15 @@ export const getCredential = (): any => {
   let credential;
 
   if (fs.existsSync(`${process.env.HOME}/.wordway/credential.json`)) {
-    credential = JSON.parse(
-      fs.readFileSync(
-        `${process.env.HOME}/.wordway/credential.json`
-      ).toString()
-    );
+    try {
+      credential = JSON.parse(
+        fs.readFileSync(
+          `${process.env.HOME}/.wordway/credential.json`
+        ).toString()
+      );
+    } catch (error) {
+      // ignore error
+    }
   }
   return credential;
 }
