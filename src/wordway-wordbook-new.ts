@@ -25,11 +25,13 @@ setTimeout(async (): Promise<void> => {
       version: '1.0.0',
     };
 
-    const { visibility, difficultyLevel } = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'title',
-      },
+    const { title, visibility, difficultyLevel } = await inquirer.prompt([
+      ...((program.title || '').length > 0 ? [] : [
+        {
+          type: 'input',
+          name: 'title',
+        }
+      ]),
       {
         type: 'list',
         name: 'visibility',
@@ -55,7 +57,7 @@ setTimeout(async (): Promise<void> => {
       wordway: '1.0.0',
       info: {
         slug,
-        title: program.title || 'A example wordbook',
+        title: program.title || title || 'A example wordbook',
         summary: program.summary || '',
         tags: ['wordway', 'example'],
         visibility,
