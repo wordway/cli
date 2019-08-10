@@ -6,13 +6,23 @@ import { sharedApiClient as apiClient } from './networking';
 import logger from './utilities/logger';
 import { checkIsAuthorized } from './globals';
 
-program
-  .parse(process.argv);
-
 const path = `${process.cwd()}`;
 
 const loadWordbook = () => {
-  const wordbook = YAML.load(`${path}/wordbook.yaml`);
+  let wordbook = YAML.load(`${path}/wordbook.yaml`);
+
+  const { info } = wordbook;
+
+  if (info.repository_type == 'git' && fs.existsSync(`${path}/assets/cover.png`)) {
+    wordbook = Object.assign(wordbook, {
+      info: Object.assign(
+        wordbook.info,
+        {
+          cover_url: `${info.repository_url}/raw/master/assets/cover.png`,
+        },
+      ),
+    });
+  }
 
   let chapters = [];
   if (fs.existsSync(`${path}/chapters`)) {
@@ -43,35 +53,37 @@ const loadWordbook = () => {
   return wordbook;
 }
 
-setTimeout(async (): Promise<void> => {
-  if (!checkIsAuthorized()) return;
+program
+  .action(async (): Promise<void> => {
+    if (!checkIsAuthorized()) return;
 
-  logger.info('Publishing...');
-  try {
-    const wordbook = loadWordbook();
-    const { info } = wordbook;
-
-    let wordbookCreated = true;
+    logger.info('Publishing...');
     try {
-      await apiClient.get(`/wordbooks/${info.slug}`);
-    } catch (e) {
-      if (e.response && e.response.status === 404) {
-        wordbookCreated = false;
-      } else {
-        throw e;
+      const wordbook = loadWordbook();
+      const { info } = wordbook;
+
+      let wordbookCreated = true;
+      try {
+        await apiClient.get(`/wordbooks/${info.slug}`);
+      } catch (e) {
+        if (e.response && e.response.status === 404) {
+          wordbookCreated = false;
+        } else {
+          throw e;
+        }
       }
+
+      if (!wordbookCreated) {
+        await apiClient.post('/wordbooks', info);
+      }
+
+      // 将单词列表数据更新到单词本
+      await apiClient.patch(`/wordbooks/${info.slug}`, wordbook);
+
+      logger.success(`Published ${wordbook.info.title} (${wordbook.info.slug})`);
+    } catch (e) {
+      logger.error(JSON.stringify(e.response.data));
+      logger.error(e.message);
     }
-
-    if (!wordbookCreated) {
-      await apiClient.post('/wordbooks', info);
-    }
-
-    // 将单词列表数据更新到单词本
-    await apiClient.patch(`/wordbooks/${info.slug}`, wordbook);
-
-    logger.success(`Published ${wordbook.info.title} (${wordbook.info.slug})`);
-  } catch (e) {
-    logger.error(JSON.stringify(e.response.data));
-    logger.error(e.message);
-  }
-});
+  })
+  .parse(process.argv);
