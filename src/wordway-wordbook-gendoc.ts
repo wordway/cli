@@ -1,6 +1,7 @@
 import * as program from 'commander';
 import * as fs from 'fs';
 import * as YAML from 'yamljs';
+import * as toc from 'markdown-toc';
 import { sharedApiClient as apiClient } from './networking';
 import logger from './utilities/logger';
 import { checkIsAuthorized } from './globals';
@@ -63,6 +64,12 @@ setTimeout(async (): Promise<void> => {
     tablesString += genTableString(null, words);
     tablesString += chapters.map(v => genTableString(v, v.words)).join('\n');
 
+    const tocString = chapters.length == 0 ? '' : `
+## Table of Contents
+
+${toc(tablesString).content}
+`;
+
     const readmeText = `
 # wordbook-${info.slug}
 
@@ -70,8 +77,8 @@ setTimeout(async (): Promise<void> => {
 ![#](https://img.shields.io/date/${new Date(updatedAt).getTime() / 1000}?label=last%20update)
 
 ${info.title}
-
-## Words
+${tocString}
+## 单词
 
 这些是该单词本中所包含的单词。
 
