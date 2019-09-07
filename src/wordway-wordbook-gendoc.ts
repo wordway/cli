@@ -1,7 +1,6 @@
 import * as program from 'commander';
 import * as fs from 'fs';
 import * as YAML from 'yamljs';
-import chalk from 'chalk';
 import { sharedApiClient as apiClient } from './networking';
 import logger from './utilities/logger';
 import { checkIsAuthorized } from './globals';
@@ -11,12 +10,12 @@ program
 
 const path = `${process.cwd()}`;
 
-const loadWordbook = () => {
+const loadWordbook = (): any => {
   const wordbook = YAML.load(`${path}/wordbook.yaml`);
   return wordbook;
 }
 
-const genTableString = (chapter, words) => {
+const genTableString = (chapter, words): string => {
   if (words.length === 0) return '';
 
   let tableString = '';
@@ -28,7 +27,7 @@ const genTableString = (chapter, words) => {
 | 单词 | 音标 | 基本释义 |
 | ---- | ------- | ------- |
 `;
-  for (let i = 0; i < words.length; i++) {
+  for (let i = 0; i < words.length; i += 1) {
     const word = words[i];
 
     tableString += `| ${word.word} | UK [🔊](${word.ukAudioUrl}) [${word.ukIpa}]<br>US [🔊](${word.usAudioUrl}) [${word.usIpa}] | ${(word.definitions || []).join('<br>')} |\n`;

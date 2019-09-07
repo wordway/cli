@@ -9,7 +9,7 @@ program
 
     const { data: { items } } = await apiClient.get('/wordbooks');
 
-    for (let i = 0; i < items.length; i++) {
+    for (let i = 0; i < items.length; i += 1) {
       const wordbook = items[i];
 
       logger.log(`\nId: ${wordbook.id}\nTitle: ${wordbook.title}\nDate: ${wordbook.createdAt}`);

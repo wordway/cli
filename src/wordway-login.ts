@@ -10,8 +10,9 @@ program
       const result = await inquirer.prompt([
         {
           name: 'email',
-          validate: value => new Promise(resolve => {
-            var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+          // eslint-disable-next-line
+          validate: value => new Promise((resolve): void => {
+            const pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
             resolve(pattern.test(value) || 'Not a valid email.');
           }),
         },

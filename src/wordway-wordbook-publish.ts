@@ -1,19 +1,19 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import * as program from 'commander';
 import * as fs from 'fs';
 import * as YAML from 'yamljs';
-import chalk from 'chalk';
 import { sharedApiClient as apiClient } from './networking';
 import logger from './utilities/logger';
 import { checkIsAuthorized } from './globals';
 
 const path = `${process.cwd()}`;
 
-const loadWordbook = () => {
+const loadWordbook = (): any => {
   let wordbook = YAML.load(`${path}/wordbook.yaml`);
 
   const { info } = wordbook;
 
-  if (info.repository_type == 'git' && fs.existsSync(`${path}/assets/cover.png`)) {
+  if (info.repository_type === 'git' && fs.existsSync(`${path}/assets/cover.png`)) {
     wordbook = Object.assign(wordbook, {
       info: Object.assign(
         wordbook.info,
@@ -27,7 +27,7 @@ const loadWordbook = () => {
   let chapters = [];
   if (fs.existsSync(`${path}/chapters`)) {
     const files = fs.readdirSync(`${path}/chapters`);
-    for (let i = 0; i < files.length; i++) {
+    for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
       let chapter = YAML.load(`${path}/chapters/${files[i]}`);
       if (chapter.unique_id) {

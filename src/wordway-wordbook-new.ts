@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import * as program from 'commander';
 import * as fs from 'fs';
 import * as YAML from 'yamljs';
