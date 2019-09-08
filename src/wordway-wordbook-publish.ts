@@ -13,12 +13,12 @@ const loadWordbook = (): any => {
 
   const { info } = wordbook;
 
-  if (info.repository_type === 'git' && fs.existsSync(`${path}/assets/cover.png`)) {
+  if (info.repository_type === 'git' && fs.existsSync(`${path}/assets/cover.jpg`)) {
     wordbook = Object.assign(wordbook, {
       info: Object.assign(
         wordbook.info,
         {
-          cover_url: `${info.repository_url}/raw/master/assets/cover.png`,
+          cover_url: `${info.repository_url}/raw/master/assets/cover.jpg`,
         },
       ),
     });
