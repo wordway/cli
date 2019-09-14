@@ -23,16 +23,52 @@ const genTableString = (chapter, words): string => {
   if (chapter) {
     tableString += `### ${chapter.title}\n`;
   }
-  tableString +=
-`
-| 单词 | 音标 | 基本释义 |
-| ---- | ------- | ------- |
-`;
+
+  let theadString = `<thead>
+    <tr>
+      <td width="180px">单词</td>
+      <td width="260px">音标</td>
+      <td>基本释义</td>
+    </tr>
+  </thead>`;
+
+  let tbodyString = `<tbody>`;
+
   for (let i = 0; i < words.length; i += 1) {
     const word = words[i];
 
-    tableString += `| ${word.word} | UK [🔊](${word.ukAudioUrl}) [${word.ukIpa}]<br>US [🔊](${word.usAudioUrl}) [${word.usIpa}] | ${(word.definitions || []).join('<br>')} |\n`;
+    let wordIpaFlag;
+    let wordIpa;
+    let wordAudioUrl;
+
+    if (word.usIpa != null || (word.usIpa == null && word.ukIpa == null)) {
+      wordIpaFlag = '美';
+      wordIpa = word.usIpa;
+      wordAudioUrl = word.usAudioUrl;
+    } else {
+      wordIpaFlag = '英';
+      wordIpa = word.ukIpa;
+      wordAudioUrl = word.ukAudioUrl;
+    }
+
+    tbodyString += `
+    <tr>
+      <td>${word.word}</td>
+      <td>
+        <a href="${wordAudioUrl}">🔊</a>${wordIpa ? `[${wordIpa}]` : ''}
+      </td>
+      <td>${(word.definitions || []).join('<br>')}</td>
+    </tr>`;
   }
+  tbodyString += `
+  </tbody>`;
+
+  tableString += `
+<table>
+  ${theadString}
+  ${tbodyString}
+</table>
+  `;
 
   return tableString;
 }
