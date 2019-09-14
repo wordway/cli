@@ -24,7 +24,7 @@ const genTableString = (chapter, words): string => {
     tableString += `### ${chapter.title}\n`;
   }
 
-  let theadString = `<thead>
+  const theadString = `<thead>
     <tr>
       <td width="180px">单词</td>
       <td width="260px">音标</td>
@@ -37,16 +37,16 @@ const genTableString = (chapter, words): string => {
   for (let i = 0; i < words.length; i += 1) {
     const word = words[i];
 
-    let wordIpaFlag;
+    // let wordIpaFlag;
     let wordIpa;
     let wordAudioUrl;
 
     if (word.usIpa != null || (word.usIpa == null && word.ukIpa == null)) {
-      wordIpaFlag = '美';
+      // wordIpaFlag = '美';
       wordIpa = word.usIpa;
       wordAudioUrl = word.usAudioUrl;
     } else {
-      wordIpaFlag = '英';
+      // wordIpaFlag = '英';
       wordIpa = word.ukIpa;
       wordAudioUrl = word.ukAudioUrl;
     }

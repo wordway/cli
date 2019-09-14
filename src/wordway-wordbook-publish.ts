@@ -26,9 +26,9 @@ const loadWordbook = (): any => {
 
   let chapters = [];
   if (fs.existsSync(`${path}/chapters`)) {
-    const compareFn = (function(v1, v2){
-      let v1num = parseInt(v1.replace('chapter', '').replace('.yaml', ''));
-      let v2num = parseInt(v2.replace('chapter', '').replace('.yaml', ''));
+    const compareFn = ((v1, v2): any => {
+      const v1num = parseInt(v1.replace('chapter', '').replace('.yaml', ''), 10);
+      const v2num = parseInt(v2.replace('chapter', '').replace('.yaml', ''), 10);
 
       return v1num - v2num;
      });
