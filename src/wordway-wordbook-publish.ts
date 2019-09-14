@@ -26,7 +26,13 @@ const loadWordbook = (): any => {
 
   let chapters = [];
   if (fs.existsSync(`${path}/chapters`)) {
-    const files = fs.readdirSync(`${path}/chapters`);
+    const compareFn = (function(v1, v2){
+      let v1num = parseInt(v1.replace('chapter', '').replace('.yaml', ''));
+      let v2num = parseInt(v2.replace('chapter', '').replace('.yaml', ''));
+
+      return v1num - v2num;
+     });
+    const files = fs.readdirSync(`${path}/chapters`).sort(compareFn);
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
       let chapter = YAML.load(`${path}/chapters/${files[i]}`);
