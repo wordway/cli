@@ -4,6 +4,7 @@ program
   .version('1.0.0')
   .description('Command-line Interface (CLI) for Wordway')
   .command('t', ' ')
+  .command('gentoc', ' ')
   .command('login', 'Log in.')
   .command('logout', 'Log out.')
   // Sub-Commands
