@@ -6,7 +6,7 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
-// import * as AxiosLogger from 'axios-logger';
+import * as AxiosLogger from 'axios-logger';
 import { getCredential, getConfig } from '../globals';
 
 class ApiClient {
@@ -18,8 +18,6 @@ class ApiClient {
 
   public constructor() {
     this.renew();
-
-    // this.sharedAxios.interceptors.request.use(AxiosLogger.requestLogger);
     this.sharedAxios.interceptors.request.use(async (config): Promise<AxiosRequestConfig> => {
       const nextConfig = Object.assign(
         {},
@@ -48,6 +46,10 @@ class ApiClient {
     this.sharedAxios = axios.create({
       baseURL: this.config.apiURL,
     });
+
+    if (this.config.env == 'local') {
+      this.sharedAxios.interceptors.request.use(AxiosLogger.requestLogger);
+    }
   }
 
   public get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
