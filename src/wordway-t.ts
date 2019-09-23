@@ -11,16 +11,16 @@ program
 
       let wordIpaFlag;
       let wordIpa;
-      // let wordAudioUrl;
+      // let wordPronunciationUrl;
 
       if (word.usIpa != null || (word.usIpa == null && word.ukIpa == null)) {
         wordIpaFlag = '美';
         wordIpa = word.usIpa;
-        // wordAudioUrl = word.usAudioUrl;
+        // wordPronunciationUrl = word.usPronunciationUrl;
       } else {
         wordIpaFlag = '英';
         wordIpa = word.ukIpa;
-        // wordAudioUrl = word.ukAudioUrl;
+        // wordPronunciationUrl = word.ukPronunciationUrl;
       }
 
       console.log(chalk.green(word.word));
