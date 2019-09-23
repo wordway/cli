@@ -13,8 +13,9 @@ if (!fs.existsSync(`${process.env.HOME}/.wordway/tmp`)) {
 const configJsonPath = `${process.env.HOME}/.wordway/config.json`;
 if (!fs.existsSync(configJsonPath)) {
   const defaultConfigDev = {
-    webURL: 'https://wordway.app',
-    apiURL: 'https://api.wordway.app',
+    env: 'production',
+    webURL: 'https://wordway.thecode.me',
+    apiURL: 'https://wordway-api.thecode.me',
   };
   fs.writeFileSync(
     configJsonPath,

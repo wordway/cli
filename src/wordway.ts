@@ -1,4 +1,13 @@
 import * as program from 'commander';
+import { getConfig } from './globals';
+import logger from './utilities/logger';
+
+
+const config = getConfig();
+
+if (config.env != 'production') {
+  logger.warn(`Your environment is "${config.env}"`);
+}
 
 program
   .version('1.0.0')

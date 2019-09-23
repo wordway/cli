@@ -27,7 +27,7 @@ const genTableString = (chapter, words): string => {
   const theadString = `<thead>
     <tr>
       <td width="180px">单词</td>
-      <td width="260px">音标</td>
+      <td width="220px">音标</td>
       <td>基本释义</td>
     </tr>
   </thead>`;
@@ -39,23 +39,23 @@ const genTableString = (chapter, words): string => {
 
     // let wordIpaFlag;
     let wordIpa;
-    let wordAudioUrl;
+    let wordPronunciationUrl;
 
     if (word.usIpa != null || (word.usIpa == null && word.ukIpa == null)) {
       // wordIpaFlag = '美';
       wordIpa = word.usIpa;
-      wordAudioUrl = word.usAudioUrl;
+      wordPronunciationUrl = word.usPronunciationUrl;
     } else {
       // wordIpaFlag = '英';
       wordIpa = word.ukIpa;
-      wordAudioUrl = word.ukAudioUrl;
+      wordPronunciationUrl = word.ukPronunciationUrl;
     }
 
     tbodyString += `
     <tr>
       <td>${word.word}</td>
       <td>
-        <a href="${wordAudioUrl}">🔊</a>${wordIpa ? `[${wordIpa}]` : ''}
+        <a href="${wordPronunciationUrl}">🔊</a>${wordIpa ? `[${wordIpa}]` : ''}
       </td>
       <td>${(word.definitions || []).join('<br>')}</td>
     </tr>`;
