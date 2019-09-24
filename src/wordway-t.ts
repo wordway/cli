@@ -7,7 +7,23 @@ import logger from './utilities/logger';
 program
   .action(async (source): Promise<void> => {
     try {
-      const { data: { data: word } } = await apiClient.get(`/words/${source}`);
+      let wordCreated = true;
+      let resp;
+      try {
+        resp = await apiClient.get(`/words/${source}`);
+      } catch (e) {
+        if (e.response && e.response.status === 404) {
+          wordCreated = false;
+        } else {
+          throw e;
+        }
+      }
+
+      if (!wordCreated) {
+        resp = await apiClient.post(`/words/${source}`, { word: source });
+      }
+
+      const { data: { data: word }} = resp;
 
       let wordIpaFlag;
       let wordIpa;
@@ -29,7 +45,7 @@ program
       }
       console.log('\n');
       console.log('基本释义：');
-      console.log(word.definitions.join('\n'));
+      console.log((word.definitions || []).join('\n'));
     } catch (e) {
       logger.error(e.message);
     }

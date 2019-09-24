@@ -1,19 +1,21 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import * as program from 'commander';
 import * as fs from 'fs';
+import * as path from 'path';
+import { execSync } from 'child_process';
 import * as YAML from 'yamljs';
-import { sharedApiClient as apiClient } from './networking';
+import { sharedApiClient as apiClient, sharedApiClient, sharedQiniuClient } from './networking';
 import logger from './utilities/logger';
 import { checkIsAuthorized } from './globals';
 
-const path = `${process.cwd()}`;
+const cwd = `${process.cwd()}`;
 
 const loadWordbook = (): any => {
-  let wordbook = YAML.load(`${path}/wordbook.yaml`);
+  let wordbook = YAML.load(`${cwd}/wordbook.yaml`);
 
   const { info } = wordbook;
 
-  if (info.repository_type === 'git' && fs.existsSync(`${path}/assets/cover.jpg`)) {
+  if (info.repository_type === 'git' && fs.existsSync(`${cwd}/assets/cover.jpg`)) {
     wordbook = Object.assign(wordbook, {
       info: Object.assign(
         wordbook.info,
@@ -25,17 +27,17 @@ const loadWordbook = (): any => {
   }
 
   let chapters = [];
-  if (fs.existsSync(`${path}/chapters`)) {
+  if (fs.existsSync(`${cwd}/chapters`)) {
     const compareFn = ((v1, v2): any => {
       const v1num = parseInt(v1.replace('chapter', '').replace('.yaml', ''), 10);
       const v2num = parseInt(v2.replace('chapter', '').replace('.yaml', ''), 10);
 
       return v1num - v2num;
      });
-    const files = fs.readdirSync(`${path}/chapters`).sort(compareFn);
+    const files = fs.readdirSync(`${cwd}/chapters`).sort(compareFn);
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
-      let chapter = YAML.load(`${path}/chapters/${files[i]}`);
+      let chapter = YAML.load(`${cwd}/chapters/${files[i]}`);
       if (chapter.unique_id) {
         delete chapter.unique_id;
       }
@@ -46,7 +48,7 @@ const loadWordbook = (): any => {
           },
           chapter,
         );
-        fs.writeFileSync(`${path}/chapters/${files[i]}`, YAML.stringify(chapter, 8, 2));
+        fs.writeFileSync(`${cwd}/chapters/${files[i]}`, YAML.stringify(chapter, 8, 2));
       }
       chapters = [...chapters, chapter];
     }
@@ -59,6 +61,86 @@ const loadWordbook = (): any => {
   return wordbook;
 }
 
+const createOrUpdateWord = async (remoteWordbook: any, localWord: any): Promise<any> => {
+  try {
+    let resp;
+    let forceUpdate = false;
+
+    try {
+      resp = await apiClient.get(`/words/${localWord.word}`);
+    } catch (e) {
+      if (e.response && e.response.status === 404) {
+        forceUpdate = true;
+      } else {
+        throw e;
+      }
+    }
+
+    const uploadPronunciation = async (pronunciationType, pronunciationUrl): Promise<String> => {
+      if (!(pronunciationUrl && pronunciationUrl.startsWith('assets/'))) {
+        return pronunciationUrl;
+      }
+      const fileChecksum = execSync(`git hash-object ${pronunciationUrl}` , {cwd})
+        .toString()
+        .replace('\n', '')
+        .trim();
+
+      const { data: { data: q }} = await sharedApiClient.post('/third_parties/qiniu/generate_token');
+
+      const filepath = `${cwd}/${pronunciationUrl}`;
+      const fileext = path.parse(pronunciationUrl).ext;
+
+      const filekey = `wordbook-${remoteWordbook.slug}/${pronunciationUrl.replace(fileext, `.${fileChecksum}${fileext}`)}`;
+
+      let fileExists = false;
+      try {
+        await sharedApiClient.post('/third_parties/qiniu/bucke_stat', {
+          key: filekey,
+        })
+        fileExists = true;
+      } catch (e) {}
+
+      if (!fileExists) {
+        const r = await sharedQiniuClient.upload(
+          q.uploadToken,
+          filekey,
+          filepath,
+        );
+      }
+      return `${q.bucketDomain}/${filekey}`;
+    };
+
+    const ukPronunciationUrl = await uploadPronunciation('uk', localWord.uk_pronunciation_url);
+    const usPronunciationUrl = await uploadPronunciation('us', localWord.us_pronunciation_url);
+    if (localWord.custom) {
+      forceUpdate = true;
+    }
+
+    if (forceUpdate) {
+      let nextWord = localWord;
+      if (localWord.custom) {
+        nextWord = Object.assign(nextWord, { wordbook_id: remoteWordbook.id });
+      }
+      if (ukPronunciationUrl) {
+        nextWord = Object.assign(nextWord, {uk_pronunciation_url: ukPronunciationUrl});
+      }
+      if (usPronunciationUrl) {
+        nextWord = Object.assign(nextWord, {us_pronunciation_url: usPronunciationUrl});
+      }
+
+      resp = await apiClient.post(`/words/${localWord.word}`, nextWord);
+      logger.info(`Created a new word: "${localWord.word}"`);
+    } else {
+      logger.info(`Skipped a exist word: "${localWord.word}"`);
+    }
+
+    const { data: w } = resp.data;
+    return w;
+  } catch (e) {
+    throw e;
+  }
+}
+
 program
   .action(async (): Promise<void> => {
     if (!checkIsAuthorized()) return;
@@ -68,19 +150,35 @@ program
       const wordbook = loadWordbook();
       const { info } = wordbook;
 
-      let wordbookCreated = true;
+      let remoteWordbook;
+      let remoteWordbookCreated = true;
       try {
-        await apiClient.get(`/wordbooks/${info.slug}`);
+        const r = await apiClient.get(`/wordbooks/${info.slug}`);
+        remoteWordbook = r.data.data;
       } catch (e) {
         if (e.response && e.response.status === 404) {
-          wordbookCreated = false;
+          remoteWordbookCreated = false;
         } else {
           throw e;
         }
       }
 
-      if (!wordbookCreated) {
-        await apiClient.post('/wordbooks', info);
+      if (!remoteWordbookCreated) {
+        const r = await apiClient.post('/wordbooks', info);
+        remoteWordbook = r.data.data;
+      }
+
+      for (let i = 0; i < (wordbook.words || []).length; i++) {
+        const word = wordbook.words[i];
+        await createOrUpdateWord(remoteWordbook, word);
+      }
+
+      for (let i = 0; i < (wordbook.chapters || []).length; i++) {
+        const chapter = wordbook.chapters[i];
+        for (let j = 0; j < chapter.words.length; j++) {
+          const word = chapter.words[j];
+          await createOrUpdateWord(remoteWordbook, word);
+        }
       }
 
       // 将单词列表数据更新到单词本
@@ -88,7 +186,9 @@ program
 
       logger.success(`Published ${wordbook.info.title} (${wordbook.info.slug})`);
     } catch (e) {
-      logger.error(JSON.stringify(e.response.data));
+      if (e.response != null && e.response.data != null) {
+        logger.error(JSON.stringify(e.response.data));
+      }
       logger.error(e.message);
     }
   })
