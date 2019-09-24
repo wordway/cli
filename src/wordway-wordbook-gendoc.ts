@@ -57,7 +57,7 @@ const genTableString = (chapter, words): string => {
       <td>
         <a href="${wordPronunciationUrl}">🔊</a>${wordIpa ? `[${wordIpa}]` : ''}
       </td>
-      <td>${(word.definitions || []).join('<br>')}</td>
+      <td>${word.remark ? `<b>${word.remark}</b><br>` : ''}${(word.definitions || []).join('<br>')}</td>
     </tr>`;
   }
   tbodyString += `
