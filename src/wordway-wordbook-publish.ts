@@ -13,19 +13,6 @@ const cwd = `${process.cwd()}`;
 const loadWordbook = (): any => {
   let wordbook = YAML.load(`${cwd}/wordbook.yaml`);
 
-  const { info } = wordbook;
-
-  if (info.repository_type === 'git' && fs.existsSync(`${cwd}/assets/cover.jpg`)) {
-    wordbook = Object.assign(wordbook, {
-      info: Object.assign(
-        wordbook.info,
-        {
-          cover_url: `${info.repository_url}/raw/master/assets/cover.jpg`,
-        },
-      ),
-    });
-  }
-
   let chapters = [];
   if (fs.existsSync(`${cwd}/chapters`)) {
     const compareFn = ((v1, v2): any => {
@@ -81,9 +68,7 @@ const createOrUpdateWord = async (remoteWordbook: any, localWord: any): Promise<
         return pronunciationUrl;
       }
       const fileChecksum = execSync(`git hash-object ${pronunciationUrl}` , {cwd})
-        .toString()
-        .replace('\n', '')
-        .trim();
+        .toString().replace('\n', '').trim();
 
       const { data: { data: q }} = await sharedApiClient.post('/third_parties/qiniu/generate_token');
 
@@ -94,9 +79,7 @@ const createOrUpdateWord = async (remoteWordbook: any, localWord: any): Promise<
 
       let fileExists = false;
       try {
-        await sharedApiClient.post('/third_parties/qiniu/bucke_stat', {
-          key: filekey,
-        })
+        await sharedApiClient.post('/third_parties/qiniu/bucke_stat', { key: filekey })
         fileExists = true;
       } catch (e) {}
 
@@ -118,14 +101,16 @@ const createOrUpdateWord = async (remoteWordbook: any, localWord: any): Promise<
 
     if (forceUpdate) {
       let nextWord = localWord;
+
       if (localWord.custom) {
-        nextWord = Object.assign(nextWord, { wordbook_id: remoteWordbook.id });
-      }
-      if (ukPronunciationUrl) {
-        nextWord = Object.assign(nextWord, {uk_pronunciation_url: ukPronunciationUrl});
-      }
-      if (usPronunciationUrl) {
-        nextWord = Object.assign(nextWord, {us_pronunciation_url: usPronunciationUrl});
+        nextWord = Object.assign(
+          nextWord,
+          {
+            wordbook_id: remoteWordbook.id,
+            uk_pronunciation_url: ukPronunciationUrl || undefined,
+            us_pronunciation_url: usPronunciationUrl || undefined,
+          }
+        );
       }
 
       resp = await apiClient.post(`/words/${localWord.word}`, nextWord);
@@ -147,7 +132,7 @@ program
 
     logger.info('Publishing...');
     try {
-      const wordbook = loadWordbook();
+      let wordbook = loadWordbook();
       const { info } = wordbook;
 
       let remoteWordbook;
@@ -179,6 +164,40 @@ program
           const word = chapter.words[j];
           await createOrUpdateWord(remoteWordbook, word);
         }
+      }
+
+      if (info.repository_type === 'git' && fs.existsSync(`${cwd}/assets/cover.jpg`)) {
+        const { data: { data: q }} = await sharedApiClient.post('/third_parties/qiniu/generate_token');
+
+        const filename = 'assets/cover.jpg';
+        const filepath = `${cwd}/${filename}`;
+        const fileext = path.parse(filepath).ext;
+
+        const fileChecksum = execSync(`git hash-object ${filename}` , {cwd})
+          .toString().replace('\n', '').trim();
+
+        const filekey = `wordbook-${remoteWordbook.slug}/${filename.replace(fileext, `.${fileChecksum}${fileext}`)}`;
+
+        let fileExists = false;
+        try {
+          await sharedApiClient.post('/third_parties/qiniu/bucke_stat', { key: filekey })
+          fileExists = true;
+        } catch (e) {}
+
+        if (!fileExists) {
+          const r = await sharedQiniuClient.upload(
+            q.uploadToken,
+            filekey,
+            filepath,
+          );
+        }
+
+        wordbook = Object.assign(wordbook, {
+          info: Object.assign(
+            wordbook.info,
+            { cover_url: `${q.bucketDomain}/${filekey}` },
+          ),
+        });
       }
 
       // 将单词列表数据更新到单词本
