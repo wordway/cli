@@ -6,10 +6,10 @@ class QiniuClient {
     filekey: string,
     filepath: string,
   ): Promise<any> {
-    var uploaderConfig = new qiniu.conf.Config()
+    let uploaderConfig = new qiniu.conf.Config()
 
-    var uploader = new qiniu.form_up.FormUploader(uploaderConfig)
-    var putExtra = new qiniu.form_up.PutExtra()
+    let uploader = new qiniu.form_up.FormUploader(uploaderConfig)
+    let putExtra = new qiniu.form_up.PutExtra()
 
     return new Promise((resolve, reject) => {
       const callback = (respErr, respBody, respInfo) => {
