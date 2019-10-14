@@ -12,7 +12,7 @@ program
           name: 'email',
           // eslint-disable-next-line
           validate: value => new Promise((resolve): void => {
-            const pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+            const pattern = /^([\w_\.\-\+])+\@([\w\-]+\.)+([\w]{2,10})+$/;
             resolve(pattern.test(value) || 'Not a valid email.');
           }),
         },
