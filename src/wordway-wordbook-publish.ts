@@ -160,7 +160,7 @@ program
 
       for (let i = 0; i < (wordbook.chapters || []).length; i++) {
         const chapter = wordbook.chapters[i];
-        for (let j = 0; j < chapter.words.length; j++) {
+        for (let j = 0; j < (chapter.words || []).length; j++) {
           const word = chapter.words[j];
           await createOrUpdateWord(remoteWordbook, word);
         }
