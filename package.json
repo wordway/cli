@@ -1,6 +1,6 @@
 {
   "name": "wordway-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Command-line Interface (CLI) for Wordway",
   "main": "lib/index.js",
   "repository": "git@github.com:wordway/wordway-cli.git",

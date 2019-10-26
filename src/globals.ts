@@ -47,15 +47,14 @@ export const setConfig = (credential: any): void => {
 }
 
 export const getCredential = (): any => {
-  let credential;
+  let config = getConfig();
 
-  if (fs.existsSync(`${process.env.HOME}/.wordway/credential.json`)) {
+  let credential;
+  let credentialPath = `${process.env.HOME}/.wordway/credential.${config.env}.json`;
+
+  if (fs.existsSync(credentialPath)) {
     try {
-      credential = JSON.parse(
-        fs.readFileSync(
-          `${process.env.HOME}/.wordway/credential.json`
-        ).toString()
-      );
+      credential = JSON.parse(fs.readFileSync(credentialPath).toString());
     } catch (error) {
       // ignore error
     }
@@ -64,13 +63,14 @@ export const getCredential = (): any => {
 }
 
 export const setCredential = (credential: any): void => {
-  if (fs.existsSync(`${process.env.HOME}/.wordway/credential.json`)) {
-    fs.unlinkSync(`${process.env.HOME}/.wordway/credential.json`);
+  let config = getConfig();
+
+  let credentialPath = `${process.env.HOME}/.wordway/credential.${config.env}.json`;
+
+  if (fs.existsSync(credentialPath)) {
+    fs.unlinkSync(credentialPath);
   }
-  fs.writeFileSync(
-    `${process.env.HOME}/.wordway/credential.json`,
-    JSON.stringify(credential, null, 2),
-  );
+  fs.writeFileSync(credentialPath, JSON.stringify(credential, null, 2));
 }
 
 export const checkIsAuthorized = (): boolean => {
