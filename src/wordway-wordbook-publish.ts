@@ -166,7 +166,7 @@ program
         }
       }
 
-      if (info.repository_type === 'git' && fs.existsSync(`${cwd}/assets/cover.jpg`)) {
+      if (fs.existsSync(`${cwd}/assets/cover.jpg`)) {
         const { data: { data: q }} = await sharedApiClient.post('/third_parties/qiniu/generate_token');
 
         const filename = 'assets/cover.jpg';
