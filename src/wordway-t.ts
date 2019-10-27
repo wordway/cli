@@ -5,6 +5,7 @@ import { sharedApiClient as apiClient } from './networking';
 import logger from './utilities/logger';
 
 program
+  .option('-r, --renew', 'renew this word.')
   .action(async (source): Promise<void> => {
     try {
       let wordCreated = true;
@@ -19,7 +20,7 @@ program
         }
       }
 
-      if (!wordCreated) {
+      if (!wordCreated || program.renew) {
         resp = await apiClient.post(`/words/${source}`, { word: source });
       }
 
