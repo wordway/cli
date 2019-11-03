@@ -132,6 +132,8 @@ program
 
     logger.info('Publishing...');
     try {
+      let incorrectWords = [];
+
       let wordbook = loadWordbook();
       const { info } = wordbook;
 
@@ -155,15 +157,31 @@ program
 
       for (let i = 0; i < (wordbook.words || []).length; i++) {
         const word = wordbook.words[i];
-        await createOrUpdateWord(remoteWordbook, word);
+        try {
+          await createOrUpdateWord(remoteWordbook, word);
+        } catch (e) {
+          incorrectWords.push(word.word);
+        }
       }
 
       for (let i = 0; i < (wordbook.chapters || []).length; i++) {
         const chapter = wordbook.chapters[i];
         for (let j = 0; j < (chapter.words || []).length; j++) {
           const word = chapter.words[j];
-          await createOrUpdateWord(remoteWordbook, word);
+          try {
+            await createOrUpdateWord(remoteWordbook, word);
+          } catch (e) {
+            incorrectWords.push(word.word);
+          }
         }
+      }
+
+      if (incorrectWords.length > 0) {
+        for (let i = 0; i < incorrectWords.length; i += 1) {
+          const word = incorrectWords[i];
+          logger.error(word);
+        }
+        throw new Error('Have incorrect words, please check.');
       }
 
       if (fs.existsSync(`${cwd}/assets/cover.jpg`)) {
