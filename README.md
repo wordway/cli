@@ -1,6 +1,12 @@
 # wordway-cli
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=lijy91%40live.com&currency_code=USD&source=url)
+[![npm version][npm-image]][pub-url]
+[![Join the chat][telegram-image]][telegram-url]
+
+[npm-image]: https://img.shields.io/npm/v/wordway-cli.svg
+[npm-url]: https://www.npmjs.com/package/wordway-cli
+[telegram-image]:https://img.shields.io/badge/chat-on%20telegram-blue.svg
+[telegram-url]: https://t.me/wordway
 
 English | [简体中文](./README.zh_CN.md)
 
