@@ -1,6 +1,6 @@
 # wordway-cli
 
-[![npm version][npm-image]][pub-url]
+[![npm version][npm-image]][npm-url]
 [![Join the chat][telegram-image]][telegram-url]
 
 [npm-image]: https://img.shields.io/npm/v/wordway-cli.svg
