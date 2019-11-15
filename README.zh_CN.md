@@ -41,6 +41,14 @@ Commands:
   help [cmd]     display help for [cmd]
 ```
 
+## 讨论
+
+欢迎加入「wordway」的微信群或 [Telegram Group](https://t.me/wordway) 与我分享你的建议和想法。
+
+> 由于微信的限制，请先添加我的微信号并备注『加入 wordway 用户群』。
+
+![开发者微信](https://wordway-storage.thecode.me/screenshots/wechat_qrcode.png?imageView2/2/w/280/format/png)
+
 ## 许可证
 
 ```
