@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as fs from 'fs';
+import * as os from 'os';
 import logger from './utilities/logger';
 
-if (!fs.existsSync(`${process.env.HOME}/.wordway`)) {
-  fs.mkdirSync(`${process.env.HOME}/.wordway`);
+const homeDir = os.homedir();
+
+if (!fs.existsSync(`${homeDir}/.wordway`)) {
+  fs.mkdirSync(`${homeDir}/.wordway`);
 }
 
-if (!fs.existsSync(`${process.env.HOME}/.wordway/tmp`)) {
-  fs.mkdirSync(`${process.env.HOME}/.wordway/tmp`);
+if (!fs.existsSync(`${homeDir}/.wordway/tmp`)) {
+  fs.mkdirSync(`${homeDir}/.wordway/tmp`);
 }
 
-const configJsonPath = `${process.env.HOME}/.wordway/config.json`;
+const configJsonPath = `${homeDir}/.wordway/config.json`;
 if (!fs.existsSync(configJsonPath)) {
   const defaultConfigDev = {
     env: 'production',
@@ -26,10 +29,10 @@ if (!fs.existsSync(configJsonPath)) {
 export const getConfig = (): any => {
   let config;
 
-  if (fs.existsSync(`${process.env.HOME}/.wordway/config.json`)) {
+  if (fs.existsSync(`${homeDir}/.wordway/config.json`)) {
     config = JSON.parse(
       fs.readFileSync(
-        `${process.env.HOME}/.wordway/config.json`
+        `${homeDir}/.wordway/config.json`
       ).toString()
     );
   }
@@ -37,11 +40,11 @@ export const getConfig = (): any => {
 }
 
 export const setConfig = (credential: any): void => {
-  if (fs.existsSync(`${process.env.HOME}/.wordway/config.json`)) {
-    fs.unlinkSync(`${process.env.HOME}/.wordway/config.json`);
+  if (fs.existsSync(`${homeDir}/.wordway/config.json`)) {
+    fs.unlinkSync(`${homeDir}/.wordway/config.json`);
   }
   fs.writeFileSync(
-    `${process.env.HOME}/.wordway/config.json`,
+    `${homeDir}/.wordway/config.json`,
     JSON.stringify(credential, null, 2),
   );
 }
@@ -50,7 +53,7 @@ export const getCredential = (): any => {
   let config = getConfig();
 
   let credential;
-  let credentialPath = `${process.env.HOME}/.wordway/credential.${config.env}.json`;
+  let credentialPath = `${homeDir}/.wordway/credential.${config.env}.json`;
 
   if (fs.existsSync(credentialPath)) {
     try {
@@ -65,7 +68,7 @@ export const getCredential = (): any => {
 export const setCredential = (credential: any): void => {
   let config = getConfig();
 
-  let credentialPath = `${process.env.HOME}/.wordway/credential.${config.env}.json`;
+  let credentialPath = `${homeDir}/.wordway/credential.${config.env}.json`;
 
   if (fs.existsSync(credentialPath)) {
     fs.unlinkSync(credentialPath);
