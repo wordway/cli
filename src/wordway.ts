@@ -10,9 +10,10 @@ if (config.env != 'production') {
 }
 
 program
-  .version('1.0.3')
+  .version('1.0.4')
   .description('Command-line Interface (CLI) for Wordway')
   .command('t', ' ')
+  .command('extract', ' ')
   .command('gentoc', ' ')
   .command('login', 'Log in.')
   .command('logout', 'Log out.')
