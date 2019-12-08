@@ -19,7 +19,7 @@ Prerequisites: [Node.js](https://nodejs.org/en/) (>=4.x, 6.x preferred), npm ver
 Install CLI globally with
 
 ```bash
-$ npm install -g git+https://github.com/wordway/wordway-cli.git
+$ npm install -g wordway-cli
 ```
 
 Now you can run CLI using following command anywhere
@@ -40,6 +40,9 @@ Options:
   -h, --help     output usage information
 
 Commands:
+  t
+  extract
+  gentoc
   login          Log in.
   logout         Log out.
   config         Manages the `wordway-cli` configuration files.

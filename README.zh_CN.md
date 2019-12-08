@@ -19,7 +19,7 @@ Wordway 的命令行界面（CLI）
 全局安装CLI
 
 ```bash
-$ npm install -g git+https://github.com/wordway/wordway-cli.git
+$ npm install -g wordway-cli
 ```
 
 现在，您可以使用以下命令在任何位置运行 CLI
@@ -40,6 +40,9 @@ Options:
   -h, --help     output usage information
 
 Commands:
+  t
+  extract
+  gentoc
   login          Log in.
   logout         Log out.
   config         Manages the `wordway-cli` configuration files.
