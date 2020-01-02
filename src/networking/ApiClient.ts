@@ -47,7 +47,7 @@ class ApiClient {
       baseURL: this.config.apiURL,
     });
 
-    if (this.config.env == 'local') {
+    if (this.config.env === 'local') {
       this.sharedAxios.interceptors.request.use(AxiosLogger.requestLogger);
     }
   }

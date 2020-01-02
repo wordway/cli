@@ -5,7 +5,7 @@ import logger from './utilities/logger';
 
 const config = getConfig();
 
-if (config.env != 'production') {
+if (config.env !== 'production') {
   logger.warn(`Your environment is "${config.env}"`);
 }
 

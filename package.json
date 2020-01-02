@@ -18,6 +18,9 @@
   },
   "dependencies": {
     "@types/node": "^12.6.8",
+    "@wordway/translate-api": "link:../wordway/packages/translate-api",
+    "@wordway/translate-webengine-bing": "link:../wordway/packages/translate-webengine-bing",
+    "@wordway/translate-webengine-youdao": "link:../wordway/packages/translate-webengine-youdao",
     "axios": "^0.19.0",
     "axios-logger": "^2.1.0",
     "chalk": "^2.4.2",
@@ -42,7 +45,7 @@
     "eslint-plugin-jest": "^22.4.1",
     "jest": "^24.7.1",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.4.3"
+    "typescript": "^3.7.3"
   },
   "jest": {
     "transform": {
