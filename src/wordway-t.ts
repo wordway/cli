@@ -85,8 +85,6 @@ program
           console.log([...slicedSentences].map(fn).join(''))
           console.log('\r')
         }
-
-        console.log(`via ${chalk.underline('https://wordway.app/')}`)
       } catch (e) {
         logger.error(e.message)
       }
