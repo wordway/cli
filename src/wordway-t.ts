@@ -53,7 +53,7 @@ program
         if (definitions) {
           const fn = (d, i): string => {
             return [
-              `${chalk.gray(`- ${d.type}`)} `,
+              `${chalk.green(`- ${d.type}`)} `,
               `${chalk.green(d.values.join('；'))}`,
               i < definitions.length - 1 ? '\n' : ''
             ].join('')
@@ -73,15 +73,16 @@ program
 
         // 例句
         if (sentences) {
+          const slicedSentences = sentences.slice(0, 6)
           const fn = (d, i): string => {
             const { source: s, target: t } = d
             return [
               `${chalk.gray(`${i + 1}. ${s}`)}\n`,
               `${chalk.cyan(`   ${t}`)}`,
-              i < sentences.length - 1 ? '\n' : ''
+              i < slicedSentences.length - 1 ? '\n' : ''
             ].join('')
           }
-          console.log([...sentences.slice(0, 6)].map(fn).join(''))
+          console.log([...slicedSentences].map(fn).join(''))
           console.log('\r')
         }
 
