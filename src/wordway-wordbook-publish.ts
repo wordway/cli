@@ -113,7 +113,7 @@ const createOrUpdateWord = async (remoteWordbook: any, localWord: any): Promise<
         );
       }
 
-      resp = await apiClient.post(`/words/${localWord.word}`, nextWord);
+      resp = await apiClient.post('/words', nextWord);
       logger.info(`Created a new word: "${localWord.word}"`);
     } else {
       logger.info(`Skipped a exist word: "${localWord.word}"`);
